@@ -11,3 +11,7 @@
 *.lai
 *.la
 *.a
+
+*Cache*
+*srv_gen*
+cmake_install*
