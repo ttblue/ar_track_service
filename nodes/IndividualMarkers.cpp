@@ -219,7 +219,6 @@ bool getMarkersCallback (ar_track_service::MarkerPositions::Request &req,
 		//Convert cloud to PCL
 		ARCloud cloud;
 		pcl::fromROSMsg(req.pc, cloud);
-
 		//Get an OpenCV image from the cloud
 		pcl::toROSMsg (cloud, *image_msg);
 		image_msg->header.stamp = req.pc.header.stamp;
@@ -288,6 +287,8 @@ int main(int argc, char *argv[])
 	marker_detector.SetMarkerSize(marker_size);
 
 	cam = new Camera();
+
+	std::cout<<"Spawned service. Ready for request."<<std::endl;
 
 	ros::Duration(1.0).sleep();
 	ros::spin ();

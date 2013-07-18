@@ -14,4 +14,10 @@
 
 *Cache*
 *srv_gen*
-cmake_install*
+*make_install*
+
+*.project
+*.cproject
+*pyc
+*bin/*
+*CMakeFiles/*
