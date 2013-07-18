@@ -1,0 +1,15 @@
+<package>
+  <description brief="ar_track_service">
+
+     ar_track_service
+
+  </description>
+  <author>Sibi Venkatesan</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ar_track_service</url>
+  <depend package="ar_track_alvar"/>
+
+</package>
+
+
