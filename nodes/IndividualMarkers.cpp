@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 	ros::ServiceServer markerService =
 			n.advertiseService ("getMarkers", getMarkersCallback);
 	// Change accordingly
-	marker_size = 4.4;
+	marker_size = 3.8;
 
 	// Not sure what these values are
 	max_new_marker_error = 0.08;
