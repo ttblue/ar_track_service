@@ -64,7 +64,7 @@ tf::TransformListener *tf_listener;
 tf::TransformBroadcaster *tf_broadcaster;
 MarkerDetector<MarkerData> marker_detector;
 
-double marker_size;
+double marker_size, marker_size_stand;
 double max_new_marker_error;
 double max_track_error;
 
@@ -279,12 +279,16 @@ int main(int argc, char *argv[])
 	ros::ServiceServer markerService =
 			n.advertiseService ("getMarkers", getMarkersCallback);
 	// Change accordingly
-	marker_size = 4.4;
+	marker_size = 3.8;
+	marker_size_stand = 5.5;
 
 	// Not sure what these values are
 	max_new_marker_error = 0.08;
 	max_track_error = 0.2;
 	marker_detector.SetMarkerSize(marker_size);
+   	marker_detector.SetMarkerSizeForId(0, marker_size_stand);
+	marker_detector.SetMarkerSizeForId(1, marker_size_stand);
+	marker_detector.SetMarkerSizeForId(2, marker_size_stand);	
 
 	cam = new Camera();
 
