@@ -31,5 +31,8 @@ rosbuild_gensrv()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 
 
-rosbuild_add_executable(marker_service nodes/IndividualMarkers.cpp)
+rosbuild_add_executable(marker_service nodes/IndividualMarkersService.cpp)
 target_link_libraries(marker_service ar_track_alvar kinect_filtering)
+
+rosbuild_add_executable(marker_node nodes/IndividualMarkersTopic.cpp)
+target_link_libraries(marker_node ar_track_alvar kinect_filtering)

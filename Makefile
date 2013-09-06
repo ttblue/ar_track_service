@@ -35,9 +35,6 @@ CMAKE_COMMAND = /usr/bin/cmake
 # The command to remove a file.
 RM = /usr/bin/cmake -E remove -f
 
-# Escaping for special characters.
-EQUALS = =
-
 # The program to use to edit the cache.
 CMAKE_EDIT_COMMAND = /usr/bin/ccmake
 
@@ -180,6 +177,32 @@ clean-test-results/fast:
 .PHONY : clean-test-results/fast
 
 #=============================================================================
+# Target rules for targets named marker_node
+
+# Build rule for target.
+marker_node: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 marker_node
+.PHONY : marker_node
+
+# fast build rule for target.
+marker_node/fast:
+	$(MAKE) -f CMakeFiles/marker_node.dir/build.make CMakeFiles/marker_node.dir/build
+.PHONY : marker_node/fast
+
+#=============================================================================
+# Target rules for targets named marker_service
+
+# Build rule for target.
+marker_service: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 marker_service
+.PHONY : marker_service
+
+# fast build rule for target.
+marker_service/fast:
+	$(MAKE) -f CMakeFiles/marker_service.dir/build.make CMakeFiles/marker_service.dir/build
+.PHONY : marker_service/fast
+
+#=============================================================================
 # Target rules for targets named rosbuild_precompile
 
 # Build rule for target.
@@ -310,19 +333,6 @@ test-results-run/fast:
 .PHONY : test-results-run/fast
 
 #=============================================================================
-# Target rules for targets named tester
-
-# Build rule for target.
-tester: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 tester
-.PHONY : tester
-
-# fast build rule for target.
-tester/fast:
-	$(MAKE) -f CMakeFiles/tester.dir/build.make CMakeFiles/tester.dir/build
-.PHONY : tester/fast
-
-#=============================================================================
 # Target rules for targets named tests
 
 # Build rule for target.
@@ -336,19 +346,34 @@ tests/fast:
 .PHONY : tests/fast
 
 # target to build an object file
-nodes/IndividualMarkers.o:
-	$(MAKE) -f CMakeFiles/tester.dir/build.make CMakeFiles/tester.dir/nodes/IndividualMarkers.o
-.PHONY : nodes/IndividualMarkers.o
+nodes/IndividualMarkersService.o:
+	$(MAKE) -f CMakeFiles/marker_service.dir/build.make CMakeFiles/marker_service.dir/nodes/IndividualMarkersService.o
+.PHONY : nodes/IndividualMarkersService.o
 
 # target to preprocess a source file
-nodes/IndividualMarkers.i:
-	$(MAKE) -f CMakeFiles/tester.dir/build.make CMakeFiles/tester.dir/nodes/IndividualMarkers.i
-.PHONY : nodes/IndividualMarkers.i
+nodes/IndividualMarkersService.i:
+	$(MAKE) -f CMakeFiles/marker_service.dir/build.make CMakeFiles/marker_service.dir/nodes/IndividualMarkersService.i
+.PHONY : nodes/IndividualMarkersService.i
 
 # target to generate assembly for a file
-nodes/IndividualMarkers.s:
-	$(MAKE) -f CMakeFiles/tester.dir/build.make CMakeFiles/tester.dir/nodes/IndividualMarkers.s
-.PHONY : nodes/IndividualMarkers.s
+nodes/IndividualMarkersService.s:
+	$(MAKE) -f CMakeFiles/marker_service.dir/build.make CMakeFiles/marker_service.dir/nodes/IndividualMarkersService.s
+.PHONY : nodes/IndividualMarkersService.s
+
+# target to build an object file
+nodes/IndividualMarkersTopic.o:
+	$(MAKE) -f CMakeFiles/marker_node.dir/build.make CMakeFiles/marker_node.dir/nodes/IndividualMarkersTopic.o
+.PHONY : nodes/IndividualMarkersTopic.o
+
+# target to preprocess a source file
+nodes/IndividualMarkersTopic.i:
+	$(MAKE) -f CMakeFiles/marker_node.dir/build.make CMakeFiles/marker_node.dir/nodes/IndividualMarkersTopic.i
+.PHONY : nodes/IndividualMarkersTopic.i
+
+# target to generate assembly for a file
+nodes/IndividualMarkersTopic.s:
+	$(MAKE) -f CMakeFiles/marker_node.dir/build.make CMakeFiles/marker_node.dir/nodes/IndividualMarkersTopic.s
+.PHONY : nodes/IndividualMarkersTopic.s
 
 # Help Target
 help:
@@ -363,6 +388,8 @@ help:
 	@echo "... ROSBUILD_gensrv_py"
 	@echo "... clean-test-results"
 	@echo "... edit_cache"
+	@echo "... marker_node"
+	@echo "... marker_service"
 	@echo "... rebuild_cache"
 	@echo "... rosbuild_precompile"
 	@echo "... rosbuild_premsgsrvgen"
@@ -374,11 +401,13 @@ help:
 	@echo "... test-future"
 	@echo "... test-results"
 	@echo "... test-results-run"
-	@echo "... tester"
 	@echo "... tests"
-	@echo "... nodes/IndividualMarkers.o"
-	@echo "... nodes/IndividualMarkers.i"
-	@echo "... nodes/IndividualMarkers.s"
+	@echo "... nodes/IndividualMarkersService.o"
+	@echo "... nodes/IndividualMarkersService.i"
+	@echo "... nodes/IndividualMarkersService.s"
+	@echo "... nodes/IndividualMarkersTopic.o"
+	@echo "... nodes/IndividualMarkersTopic.i"
+	@echo "... nodes/IndividualMarkersTopic.s"
 .PHONY : help
 
 
