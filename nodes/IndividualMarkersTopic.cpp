@@ -477,7 +477,8 @@ int main(int argc, char *argv[])
   size_t i1,i2;
   i1 = cam_image_topic.find('/');
   i2 = cam_image_topic.find('/',1);
-  if (i1==i2) i1=0;
+  if (i1 == i2) i1 = 0;
+  else i1 = 1;
 
   unique_cam_name = "_" + cam_image_topic.substr(i1, i2-i1);
 
