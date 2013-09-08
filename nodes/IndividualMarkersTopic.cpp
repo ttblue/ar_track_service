@@ -74,6 +74,7 @@ double max_track_error;
 std::string cam_image_topic; 
 std::string cam_info_topic; 
 std::string output_frame;
+std::string unique_cam_name;
 
 
 //Debugging utility function
@@ -369,14 +370,9 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
 	  //Publish the transform from the camera to the marker		
 	  std::string markerFrame = "ar_marker";
 	  std::stringstream out;
-	  out << id << "_camera";
-	  if (image_msg->header.frame_id[0] == '/')
-	    out << image_msg->header.frame_id[7];
-	  else
-	    out << image_msg->header.frame_id[6];
-
+	  out << id;
 	  std::string id_string = out.str();
-	  markerFrame += id_string;
+	  markerFrame += id_string + unique_cam_name;
 	  tf::StampedTransform camToMarker (t, image_msg->header.stamp, image_msg->header.frame_id, markerFrame.c_str());
 	  tf_broadcaster->sendTransform(camToMarker);
 				
@@ -434,7 +430,7 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
 	  rvizMarker_.lifetime = ros::Duration (1.0);
 	  rvizMarkerPub_.publish (rvizMarker_);
 
-	  //Get the pose of the tag in the camera frame, then the output frame (usually torso)				
+	  //Get the pose of the tag in the camera frame, then the output frame (usually torso)
 	  tf::Transform tagPoseOutput = CamToOutput * markerPose;
 
 	  //Create the pose marker messages
@@ -443,8 +439,10 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
 	  ar_pose_marker.header.frame_id = output_frame;
 	  ar_pose_marker.header.stamp = image_msg->header.stamp;
 	  ar_pose_marker.id = id;
-	  arPoseMarkers_.markers.push_back (ar_pose_marker);	
+	  arPoseMarkers_.markers.push_back (ar_pose_marker);
 	}
+      arPoseMarkers_.header.frame_id = output_frame;
+      arPoseMarkers_.header.stamp = image_msg->header.stamp;
       arMarkerPub_.publish (arPoseMarkers_);
     }
     catch (sensor_msgs::CvBridgeException & e){
@@ -476,12 +474,19 @@ int main(int argc, char *argv[])
   output_frame = argv[6];
   marker_detector.SetMarkerSize(marker_size);
 
+  size_t i1,i2;
+  i1 = cam_image_topic.find('/');
+  i2 = cam_image_topic.find('/',1);
+  if (i1==i2) i1=0;
+
+  unique_cam_name = "_" + cam_image_topic.substr(i1, i2-i1);
+
   cam = new Camera(n, cam_info_topic);
   tf_listener = new tf::TransformListener(n);
   tf_broadcaster = new tf::TransformBroadcaster();
-  arMarkerPub_ = n.advertise < ar_track_alvar::AlvarMarkers > ("ar_pose_marker", 0);
-  rvizMarkerPub_ = n.advertise < visualization_msgs::Marker > ("visualization_marker", 0);
-  rvizMarkerPub2_ = n.advertise < visualization_msgs::Marker > ("ARmarker_points", 0);
+  arMarkerPub_ = n.advertise < ar_track_alvar::AlvarMarkers > ("ar_pose_marker"+unique_cam_name, 0);
+  rvizMarkerPub_ = n.advertise < visualization_msgs::Marker > ("visualization_marker"+unique_cam_name, 0);
+  rvizMarkerPub2_ = n.advertise < visualization_msgs::Marker > ("ARmarker_points"+unique_cam_name, 0);
 	
   //Give tf a chance to catch up before the camera callback starts asking for transforms
   ros::Duration(1.0).sleep();
