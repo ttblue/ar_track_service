@@ -190,6 +190,19 @@ marker_node/fast:
 .PHONY : marker_node/fast
 
 #=============================================================================
+# Target rules for targets named marker_node_no_depth
+
+# Build rule for target.
+marker_node_no_depth: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 marker_node_no_depth
+.PHONY : marker_node_no_depth
+
+# fast build rule for target.
+marker_node_no_depth/fast:
+	$(MAKE) -f CMakeFiles/marker_node_no_depth.dir/build.make CMakeFiles/marker_node_no_depth.dir/build
+.PHONY : marker_node_no_depth/fast
+
+#=============================================================================
 # Target rules for targets named marker_service
 
 # Build rule for target.
@@ -346,6 +359,21 @@ tests/fast:
 .PHONY : tests/fast
 
 # target to build an object file
+nodes/IndividualMarkersNoKinect.o:
+	$(MAKE) -f CMakeFiles/marker_node_no_depth.dir/build.make CMakeFiles/marker_node_no_depth.dir/nodes/IndividualMarkersNoKinect.o
+.PHONY : nodes/IndividualMarkersNoKinect.o
+
+# target to preprocess a source file
+nodes/IndividualMarkersNoKinect.i:
+	$(MAKE) -f CMakeFiles/marker_node_no_depth.dir/build.make CMakeFiles/marker_node_no_depth.dir/nodes/IndividualMarkersNoKinect.i
+.PHONY : nodes/IndividualMarkersNoKinect.i
+
+# target to generate assembly for a file
+nodes/IndividualMarkersNoKinect.s:
+	$(MAKE) -f CMakeFiles/marker_node_no_depth.dir/build.make CMakeFiles/marker_node_no_depth.dir/nodes/IndividualMarkersNoKinect.s
+.PHONY : nodes/IndividualMarkersNoKinect.s
+
+# target to build an object file
 nodes/IndividualMarkersService.o:
 	$(MAKE) -f CMakeFiles/marker_service.dir/build.make CMakeFiles/marker_service.dir/nodes/IndividualMarkersService.o
 .PHONY : nodes/IndividualMarkersService.o
@@ -389,6 +417,7 @@ help:
 	@echo "... clean-test-results"
 	@echo "... edit_cache"
 	@echo "... marker_node"
+	@echo "... marker_node_no_depth"
 	@echo "... marker_service"
 	@echo "... rebuild_cache"
 	@echo "... rosbuild_precompile"
@@ -402,6 +431,9 @@ help:
 	@echo "... test-results"
 	@echo "... test-results-run"
 	@echo "... tests"
+	@echo "... nodes/IndividualMarkersNoKinect.o"
+	@echo "... nodes/IndividualMarkersNoKinect.i"
+	@echo "... nodes/IndividualMarkersNoKinect.s"
 	@echo "... nodes/IndividualMarkersService.o"
 	@echo "... nodes/IndividualMarkersService.i"
 	@echo "... nodes/IndividualMarkersService.s"

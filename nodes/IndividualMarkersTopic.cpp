@@ -76,6 +76,7 @@ std::string cam_info_topic;
 std::string output_frame;
 std::string unique_cam_name;
 
+int pub = 0;
 
 //Debugging utility function
 void draw3dPoints(ARCloud::Ptr cloud, string frame, int color, int id, double rad)
@@ -191,6 +192,26 @@ int PlaneFitPoseImprovement(int id, const ARCloud &corners_3D, ARCloud::Ptr sele
   //Get 2 points that point forward in marker x direction   
   int i1,i2;
   if(isnan(corners_3D[0].x) || isnan(corners_3D[0].y) || isnan(corners_3D[0].z) || 
+     isnan(corners_3D[1].x) || isnan(corners_3D[1].y) || isnan(corners_3D[1].z))
+    {
+      if(isnan(corners_3D[2].x) || isnan(corners_3D[2].y) || isnan(corners_3D[2].z) || 
+	 isnan(corners_3D[3].x) || isnan(corners_3D[3].y) || isnan(corners_3D[3].z))
+	{
+	  return -1;
+	}
+      else{
+	i1 = 3;
+	i2 = 2;
+      }	
+    }
+  else{
+    i1 = 0;
+    i2 = 1;
+  }
+
+  //Get 2 points the point forward in marker y direction   
+  int i3,i4;
+  if(isnan(corners_3D[0].x) || isnan(corners_3D[0].y) || isnan(corners_3D[0].z) || 
      isnan(corners_3D[3].x) || isnan(corners_3D[3].y) || isnan(corners_3D[3].z))
     {
       if(isnan(corners_3D[1].x) || isnan(corners_3D[1].y) || isnan(corners_3D[1].z) || 
@@ -199,33 +220,13 @@ int PlaneFitPoseImprovement(int id, const ARCloud &corners_3D, ARCloud::Ptr sele
 	  return -1;
 	}
       else{
-	i1 = 1;
-	i2 = 2;
+	i3 = 1;
+	i4 = 2;
       }	
     }
   else{
-    i1 = 0;
-    i2 = 3;
-  }
-
-  //Get 2 points the point forward in marker y direction   
-  int i3,i4;
-  if(isnan(corners_3D[0].x) || isnan(corners_3D[0].y) || isnan(corners_3D[0].z) || 
-     isnan(corners_3D[1].x) || isnan(corners_3D[1].y) || isnan(corners_3D[1].z))
-    {
-      if(isnan(corners_3D[3].x) || isnan(corners_3D[3].y) || isnan(corners_3D[3].z) || 
-	 isnan(corners_3D[2].x) || isnan(corners_3D[2].y) || isnan(corners_3D[2].z))
-	{
-	  return -1;
-	}
-      else{
-	i3 = 2;
-	i4 = 3;
-      }	
-    }
-  else{
-    i3 = 1;
-    i4 = 0;
+    i3 = 0;
+    i4 = 3;
   }
    
   ARCloud::Ptr orient_points(new ARCloud());
@@ -265,6 +266,7 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 			     max_track_error, CVSEQ, true)) 
     {
       printf("\n--------------------------\n\n");
+      std::cout<<(pub++)%10<<std::endl;
       for (size_t i=0; i<marker_detector.markers->size(); i++)
      	{
 	  vector<cv::Point> pixels;
@@ -274,7 +276,25 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 
 	  int resol = m->GetRes();
 	  int ori = m->ros_orientation;
-      
+	  
+	  
+	  PointDouble pt[4];
+	  pt[3] = m->ros_marker_points_img[0];
+	  pt[2] = m->ros_marker_points_img[resol-1];
+	  pt[0] = m->ros_marker_points_img[(resol*resol)-resol];
+	  pt[1] = m->ros_marker_points_img[(resol*resol)-1];
+	  
+	  m->ros_corners_3D[0] = cloud(pt[0].x, pt[0].y);
+	  m->ros_corners_3D[1] = cloud(pt[1].x, pt[1].y);
+	  m->ros_corners_3D[2] = cloud(pt[2].x, pt[2].y);
+	  m->ros_corners_3D[3] = cloud(pt[3].x, pt[3].y);
+
+	  //std::cout<<pt[0].x<<" "<<pt[0].y<<std::endl;
+	  //std::cout<<pt[1].x<<" "<<pt[1].y<<std::endl;
+	  //std::cout<<pt[2].x<<" "<<pt[2].y<<std::endl;
+	  //std::cout<<pt[3].x<<" "<<pt[3].y<<std::endl;
+
+	  /*
 	  PointDouble pt1, pt2, pt3, pt4;
 	  pt4 = m->ros_marker_points_img[0];
 	  pt3 = m->ros_marker_points_img[resol-1];
@@ -285,14 +305,43 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  m->ros_corners_3D[1] = cloud(pt2.x, pt2.y);
 	  m->ros_corners_3D[2] = cloud(pt3.x, pt3.y);
 	  m->ros_corners_3D[3] = cloud(pt4.x, pt4.y);
-	  
+
+	  std::cout<<pt1.x<<" "<<pt1.y<<std::endl;
+	  std::cout<<pt2.x<<" "<<pt2.y<<std::endl;
+	  std::cout<<pt3.x<<" "<<pt3.y<<std::endl;
+	  std::cout<<pt4.x<<" "<<pt4.y<<std::endl;*/
+
 	  if(ori >= 0 && ori < 4){
-	    if(ori != 0){
-	      std::rotate(m->ros_corners_3D.begin(), m->ros_corners_3D.begin() + ori, m->ros_corners_3D.end());
+	    while(ori != 0){
+	      ARPoint temp = m->ros_corners_3D[0];
+	      m->ros_corners_3D[0] = m->ros_corners_3D[1];
+	      m->ros_corners_3D[1] = m->ros_corners_3D[2];
+	      m->ros_corners_3D[2] = m->ros_corners_3D[3];
+	      m->ros_corners_3D[3] = temp;
+	      
+	      PointDouble temp2 = pt[0];
+	      pt[0] = pt[1];
+	      pt[1] = pt[2];
+	      pt[2] = pt[3];
+	      pt[3] = temp2;
+	      
+	      ori--;
 	    }
+
 	  }
 	  else
 	    ROS_ERROR("FindMarkerBundles: Bad Orientation: %i for ID: %i", ori, id);
+
+	  //	  std::cout<<m->ros_corners_3D[0].x<<" "<<m->ros_corners_3D[0].y<<std::endl;
+	  //std::cout<<m->ros_corners_3D[1].x<<" "<<m->ros_corners_3D[1].y<<std::endl;
+	  //std::cout<<m->ros_corners_3D[2].x<<" "<<m->ros_corners_3D[2].y<<std::endl;
+	  //std::cout<<m->ros_corners_3D[3].x<<" "<<m->ros_corners_3D[3].y<<std::endl;
+
+	  //	  std::cout<<pt[0].x<<" "<<pt[0].y<<std::endl;
+	  // std::cout<<pt[1].x<<" "<<pt[1].y<<std::endl;
+	  //std::cout<<pt[2].x<<" "<<pt[2].y<<std::endl;
+	  //std::cout<<pt[3].x<<" "<<pt[3].y<<std::endl;
+	 
 
 	  //Get the 3D marker points
 	  BOOST_FOREACH (const PointDouble& p, m->ros_marker_points_img)
@@ -300,7 +349,7 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  ARCloud::Ptr selected_points = ata::filterCloud(cloud, pixels);
 
 	  //Use the kinect data to find a plane and pose for the marker
-	  int ret = PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);	
+	  int ret = PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);  
 	}
     }
 }
@@ -473,6 +522,7 @@ int main(int argc, char *argv[])
   cam_info_topic = argv[5];
   output_frame = argv[6];
   marker_detector.SetMarkerSize(marker_size);
+  marker_detector.SetMarkerSizeForId(7, 16);
 
   size_t i1,i2;
   i1 = cam_image_topic.find('/');
