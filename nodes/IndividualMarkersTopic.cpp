@@ -266,7 +266,8 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 			     max_track_error, CVSEQ, true)) 
     {
       printf("\n--------------------------\n\n");
-      std::cout<<(pub++)%10<<std::endl;
+      pub = (pub+1)%10;
+      std::cout<<pub<<std::endl;
       for (size_t i=0; i<marker_detector.markers->size(); i++)
      	{
 	  vector<cv::Point> pixels;
@@ -289,28 +290,6 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  m->ros_corners_3D[2] = cloud(pt[2].x, pt[2].y);
 	  m->ros_corners_3D[3] = cloud(pt[3].x, pt[3].y);
 
-	  //std::cout<<pt[0].x<<" "<<pt[0].y<<std::endl;
-	  //std::cout<<pt[1].x<<" "<<pt[1].y<<std::endl;
-	  //std::cout<<pt[2].x<<" "<<pt[2].y<<std::endl;
-	  //std::cout<<pt[3].x<<" "<<pt[3].y<<std::endl;
-
-	  /*
-	  PointDouble pt1, pt2, pt3, pt4;
-	  pt4 = m->ros_marker_points_img[0];
-	  pt3 = m->ros_marker_points_img[resol-1];
-	  pt1 = m->ros_marker_points_img[(resol*resol)-resol];
-	  pt2 = m->ros_marker_points_img[(resol*resol)-1];
-	  
-	  m->ros_corners_3D[0] = cloud(pt1.x, pt1.y);
-	  m->ros_corners_3D[1] = cloud(pt2.x, pt2.y);
-	  m->ros_corners_3D[2] = cloud(pt3.x, pt3.y);
-	  m->ros_corners_3D[3] = cloud(pt4.x, pt4.y);
-
-	  std::cout<<pt1.x<<" "<<pt1.y<<std::endl;
-	  std::cout<<pt2.x<<" "<<pt2.y<<std::endl;
-	  std::cout<<pt3.x<<" "<<pt3.y<<std::endl;
-	  std::cout<<pt4.x<<" "<<pt4.y<<std::endl;*/
-
 	  if(ori >= 0 && ori < 4){
 	    while(ori != 0){
 	      ARPoint temp = m->ros_corners_3D[0];
@@ -332,16 +311,6 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  else
 	    ROS_ERROR("FindMarkerBundles: Bad Orientation: %i for ID: %i", ori, id);
 
-	  //	  std::cout<<m->ros_corners_3D[0].x<<" "<<m->ros_corners_3D[0].y<<std::endl;
-	  //std::cout<<m->ros_corners_3D[1].x<<" "<<m->ros_corners_3D[1].y<<std::endl;
-	  //std::cout<<m->ros_corners_3D[2].x<<" "<<m->ros_corners_3D[2].y<<std::endl;
-	  //std::cout<<m->ros_corners_3D[3].x<<" "<<m->ros_corners_3D[3].y<<std::endl;
-
-	  //	  std::cout<<pt[0].x<<" "<<pt[0].y<<std::endl;
-	  // std::cout<<pt[1].x<<" "<<pt[1].y<<std::endl;
-	  //std::cout<<pt[2].x<<" "<<pt[2].y<<std::endl;
-	  //std::cout<<pt[3].x<<" "<<pt[3].y<<std::endl;
-	 
 
 	  //Get the 3D marker points
 	  BOOST_FOREACH (const PointDouble& p, m->ros_marker_points_img)
@@ -521,8 +490,28 @@ int main(int argc, char *argv[])
   cam_image_topic = argv[4];
   cam_info_topic = argv[5];
   output_frame = argv[6];
-  marker_detector.SetMarkerSize(marker_size);
+
+  // L gripper
+  marker_detector.SetMarkerSizeForId(4, 3.8);
+  marker_detector.SetMarkerSizeForId(13, 3.8);
+  marker_detector.SetMarkerSizeForId(15, 3.8);
+  marker_detector.SetMarkerSizeForId(3, 2.9);
+  marker_detector.SetMarkerSizeForId(6, 2.9);
+  marker_detector.SetMarkerSizeForId(10, 2.9);
+  marker_detector.SetMarkerSizeForId(11, 2.9);
+  marker_detector.SetMarkerSizeForId(1, 7.0);
   marker_detector.SetMarkerSizeForId(7, 16);
+
+  // Camera calib
+  marker_detector.SetMarkerSizeForId(0, 20.2);
+  marker_detector.SetMarkerSizeForId(2, 20.2);
+  marker_detector.SetMarkerSizeForId(3, 20.2);
+  marker_detector.SetMarkerSizeForId(30, 20.2);
+  marker_detector.SetMarkerSizeForId(31, 20.2);
+  marker_detector.SetMarkerSizeForId(32, 20.2);
+  marker_detector.SetMarkerSizeForId(33, 20.2);
+
+
 
   size_t i1,i2;
   i1 = cam_image_topic.find('/');

@@ -220,7 +220,28 @@ int main(int argc, char *argv[])
   cam_info_topic = argv[5];
   output_frame = argv[6];
   marker_detector.SetMarkerSize(marker_size);
+
+  // L gripper
+  marker_detector.SetMarkerSizeForId(4, 3.8);
+  marker_detector.SetMarkerSizeForId(13, 3.8);
+  marker_detector.SetMarkerSizeForId(15, 3.8);
+  marker_detector.SetMarkerSizeForId(3, 2.9);
+  marker_detector.SetMarkerSizeForId(6, 2.9);
+  marker_detector.SetMarkerSizeForId(10, 2.9);
+  marker_detector.SetMarkerSizeForId(11, 2.9);
+  marker_detector.SetMarkerSizeForId(1, 7.0);
   marker_detector.SetMarkerSizeForId(7, 16);
+
+  // Camera calib
+  marker_detector.SetMarkerSizeForId(0, 20.2);
+  marker_detector.SetMarkerSizeForId(2, 20.2);
+  marker_detector.SetMarkerSizeForId(3, 20.2);
+  marker_detector.SetMarkerSizeForId(30, 20.2);
+  marker_detector.SetMarkerSizeForId(31, 20.2);
+  marker_detector.SetMarkerSizeForId(32, 20.2);
+  marker_detector.SetMarkerSizeForId(33, 20.2);
+
+
 
   size_t i1,i2;
   i1 = cam_image_topic.find('/');
