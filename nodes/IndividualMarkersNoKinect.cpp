@@ -59,6 +59,8 @@ tf::TransformListener *tf_listener;
 tf::TransformBroadcaster *tf_broadcaster;
 MarkerDetector<MarkerData> marker_detector;
 
+int pub = 0;
+
 double marker_size;
 double max_new_marker_error;
 double max_track_error;
@@ -94,10 +96,16 @@ void getCapCallback (const sensor_msgs::ImageConstPtr & image_msg)
       marker_detector.Detect(capture_, cam, true, false, max_new_marker_error, max_track_error, CVSEQ, true);
 
       arPoseMarkers_.markers.clear ();
+      printf("\n--------------------------\n\n");
+      pub = (pub+1)%10;
+      std::cout<<pub<<std::endl;
       for (size_t i=0; i<marker_detector.markers->size(); i++) 
 	{
 	  //Get the pose relative to the camera
 	  int id = (*(marker_detector.markers))[i].GetId(); 
+
+	  cout << "******* ID: " << id << endl;
+
 	  Pose p = (*(marker_detector.markers))[i].pose;
 	  double px = p.translation[0]/100.0;
 	  double py = p.translation[1]/100.0;
@@ -233,13 +241,13 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(7, 16);
 
   // Camera calib
-  marker_detector.SetMarkerSizeForId(0, 20.2);
-  marker_detector.SetMarkerSizeForId(2, 20.2);
-  marker_detector.SetMarkerSizeForId(3, 20.2);
-  marker_detector.SetMarkerSizeForId(30, 20.2);
-  marker_detector.SetMarkerSizeForId(31, 20.2);
-  marker_detector.SetMarkerSizeForId(32, 20.2);
-  marker_detector.SetMarkerSizeForId(33, 20.2);
+  marker_detector.SetMarkerSizeForId(0, 20.3);
+  marker_detector.SetMarkerSizeForId(2, 20.3);
+  marker_detector.SetMarkerSizeForId(3, 20.25);
+  marker_detector.SetMarkerSizeForId(30, 20.3);
+  marker_detector.SetMarkerSizeForId(31, 20.3);
+  marker_detector.SetMarkerSizeForId(32, 20.3);
+  marker_detector.SetMarkerSizeForId(33, 20.3);
 
 
 

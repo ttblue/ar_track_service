@@ -310,13 +310,13 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(7, 16);
 
   // Camera calib
-  marker_detector.SetMarkerSizeForId(0, 20.2);
-  marker_detector.SetMarkerSizeForId(2, 20.2);
-  marker_detector.SetMarkerSizeForId(3, 20.2);
-  marker_detector.SetMarkerSizeForId(30, 20.2);
-  marker_detector.SetMarkerSizeForId(31, 20.2);
-  marker_detector.SetMarkerSizeForId(32, 20.2);
-  marker_detector.SetMarkerSizeForId(33, 20.2);
+  marker_detector.SetMarkerSizeForId(0, 20.3);
+  marker_detector.SetMarkerSizeForId(2, 20.3);
+  marker_detector.SetMarkerSizeForId(3, 20.25);
+  marker_detector.SetMarkerSizeForId(30, 20.3);
+  marker_detector.SetMarkerSizeForId(31, 20.3);
+  marker_detector.SetMarkerSizeForId(32, 20.3);
+  marker_detector.SetMarkerSizeForId(33, 20.3);
 
 
   cam = new Camera();

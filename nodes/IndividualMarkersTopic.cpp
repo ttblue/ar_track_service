@@ -76,6 +76,8 @@ std::string cam_info_topic;
 std::string output_frame;
 std::string unique_cam_name;
 
+bool use_image = false;
+
 int pub = 0;
 
 //Debugging utility function
@@ -259,7 +261,7 @@ int PlaneFitPoseImprovement(int id, const ARCloud &corners_3D, ARCloud::Ptr sele
 }
 
 
-void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
+int GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 
   //Detect and track the markers
   if (marker_detector.Detect(image, cam, true, false, max_new_marker_error,
@@ -318,7 +320,7 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  ARCloud::Ptr selected_points = ata::filterCloud(cloud, pixels);
 
 	  //Use the kinect data to find a plane and pose for the marker
-	  int ret = PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);  
+	  return PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);  
 	}
     }
 }
@@ -351,7 +353,9 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
 
     //Use the kinect to improve the pose
     Pose ret_pose;
-    GetMarkerPoses(capture_, cloud);
+    int ret = GetMarkerPoses(capture_, cloud);
+    if (ret == -1 && !use_image)
+      return;
 
     try{
       tf::StampedTransform CamToOutput;
@@ -482,6 +486,9 @@ int main(int argc, char *argv[])
     std::cout << std::endl;
     return 0;
   }
+  if (argc == 8 && atoi(argv[7])==1) {
+    use_image = true;
+  }
 
   // Get params from command line
   marker_size = atof(argv[1]);
@@ -503,13 +510,13 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(7, 16);
 
   // Camera calib
-  marker_detector.SetMarkerSizeForId(0, 20.2);
-  marker_detector.SetMarkerSizeForId(2, 20.2);
-  marker_detector.SetMarkerSizeForId(3, 20.2);
-  marker_detector.SetMarkerSizeForId(30, 20.2);
-  marker_detector.SetMarkerSizeForId(31, 20.2);
-  marker_detector.SetMarkerSizeForId(32, 20.2);
-  marker_detector.SetMarkerSizeForId(33, 20.2);
+  marker_detector.SetMarkerSizeForId(0, 20.3);
+  marker_detector.SetMarkerSizeForId(2, 20.3);
+  marker_detector.SetMarkerSizeForId(3, 20.3);
+  marker_detector.SetMarkerSizeForId(30, 20.3);
+  marker_detector.SetMarkerSizeForId(31, 20.3);
+  marker_detector.SetMarkerSizeForId(32, 20.3);
+  marker_detector.SetMarkerSizeForId(33, 20.3);
 
 
 
