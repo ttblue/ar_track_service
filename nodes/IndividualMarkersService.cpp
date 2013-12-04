@@ -297,17 +297,19 @@ int main(int argc, char *argv[])
   // Not sure what these values are
   max_new_marker_error = 0.08;
   max_track_error = 0.2;
-  marker_detector.SetMarkerSize(marker_size);
-  // L gripper
-  marker_detector.SetMarkerSizeForId(4, 3.8);
+
+  marker_detector.SetMarkerSize(3.8);
+  //marker_detector.SetMarkerSize(marker_size);
+  /*/ L gripper
+  marker_detector.SetMarkerSizeForId(4, 6.5);
   marker_detector.SetMarkerSizeForId(13, 3.8);
-  marker_detector.SetMarkerSizeForId(15, 3.8);
+  marker_detector.SetMarkerSizeForId(15, 6.5);
   marker_detector.SetMarkerSizeForId(3, 2.9);
   marker_detector.SetMarkerSizeForId(6, 2.9);
   marker_detector.SetMarkerSizeForId(10, 2.9);
-  marker_detector.SetMarkerSizeForId(11, 2.9);
+  marker_detector.SetMarkerSizeForId(11, 2.9);*/
   marker_detector.SetMarkerSizeForId(1, 7.0);
-  marker_detector.SetMarkerSizeForId(7, 16);
+  //marker_detector.SetMarkerSizeForId(7, 16);
 
   // Camera calib
   marker_detector.SetMarkerSizeForId(0, 20.3);
@@ -317,7 +319,6 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(31, 20.3);
   marker_detector.SetMarkerSizeForId(32, 20.3);
   marker_detector.SetMarkerSizeForId(33, 20.3);
-
 
   cam = new Camera();
 

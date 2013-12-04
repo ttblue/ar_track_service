@@ -261,8 +261,9 @@ int PlaneFitPoseImprovement(int id, const ARCloud &corners_3D, ARCloud::Ptr sele
 }
 
 
-int GetMarkerPoses(IplImage *image, ARCloud &cloud) {
+std::vector<size_t> GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 
+  std::vector<size_t> good_markers;
   //Detect and track the markers
   if (marker_detector.Detect(image, cam, true, false, max_new_marker_error,
 			     max_track_error, CVSEQ, true)) 
@@ -320,9 +321,12 @@ int GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  ARCloud::Ptr selected_points = ata::filterCloud(cloud, pixels);
 
 	  //Use the kinect data to find a plane and pose for the marker
-	  return PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);  
+	  int ret = PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);  
+	  if (ret != -1 || use_image)
+	    good_markers.push_back(i);
 	}
     }
+  return good_markers;
 }
       
 
@@ -353,9 +357,7 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
 
     //Use the kinect to improve the pose
     Pose ret_pose;
-    int ret = GetMarkerPoses(capture_, cloud);
-    if (ret == -1 && !use_image)
-      return;
+    std::vector<size_t> good_markers = GetMarkerPoses(capture_, cloud);
 
     try{
       tf::StampedTransform CamToOutput;
@@ -368,8 +370,9 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
       }
 
       arPoseMarkers_.markers.clear ();
-      for (size_t i=0; i<marker_detector.markers->size(); i++) 
+      for (size_t j=0; j<good_markers.size(); ++j)
 	{
+	  size_t i = good_markers[j];
 	  //Get the pose relative to the camera
 	  int id = (*(marker_detector.markers))[i].GetId(); 
 	  Pose p = (*(marker_detector.markers))[i].pose;
@@ -498,17 +501,17 @@ int main(int argc, char *argv[])
   cam_info_topic = argv[5];
   output_frame = argv[6];
 
+  marker_detector.SetMarkerSize(3.8);
   // L gripper
-  marker_detector.SetMarkerSizeForId(4, 3.8);
-  marker_detector.SetMarkerSizeForId(13, 3.8);
-  marker_detector.SetMarkerSizeForId(15, 3.8);
-  marker_detector.SetMarkerSizeForId(3, 2.9);
-  marker_detector.SetMarkerSizeForId(6, 2.9);
-  marker_detector.SetMarkerSizeForId(10, 2.9);
-  marker_detector.SetMarkerSizeForId(11, 2.9);
+  //marker_detector.SetMarkerSizeForId(4, 6.5);
+  //marker_detector.SetMarkerSizeForId(13, 3.8);
+  //marker_detector.SetMarkerSizeForId(15, 6.5);
+  //marker_detector.SetMarkerSizeForId(3, 2.9);
+  //marker_detector.SetMarkerSizeForId(6, 2.9);
+  //marker_detector.SetMarkerSizeForId(10, 2.9);
+  //marker_detector.SetMarkerSizeForId(11, 2.9);
   marker_detector.SetMarkerSizeForId(1, 7.0);
-  marker_detector.SetMarkerSizeForId(7, 16);
-
+  //marker_detector.SetMarkerSizeForId(7, 16);
   // Camera calib
   marker_detector.SetMarkerSizeForId(0, 20.3);
   marker_detector.SetMarkerSizeForId(2, 20.3);
@@ -517,8 +520,6 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(31, 20.3);
   marker_detector.SetMarkerSizeForId(32, 20.3);
   marker_detector.SetMarkerSizeForId(33, 20.3);
-
-
 
   size_t i1,i2;
   i1 = cam_image_topic.find('/');

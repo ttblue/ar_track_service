@@ -9,7 +9,7 @@
 	<arg name="cam_image_topic" default="/$(arg cam)/depth_registered/points" />
 	<arg name="cam_info_topic" default="/$(arg cam)/rgb/camera_info" />
 	<arg name="output_frame" default="/$(arg cam)_rgb_optical_frame" />
-	<arg name="use_image" default="1">
+	<arg name="use_image" default="0"/>
 
 	<include file="$(find openni_launch)/launch/openni.launch" >
 		 <arg name="device_id" value="$(arg dev_id)" />
