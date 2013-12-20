@@ -356,7 +356,6 @@ void getPointCloudCallback (const sensor_msgs::PointCloud2ConstPtr &msg)
     capture_ = bridge_.imgMsgToCv (image_msg, "rgb8");
 
     //Use the kinect to improve the pose
-    Pose ret_pose;
     std::vector<size_t> good_markers = GetMarkerPoses(capture_, cloud);
 
     try{
@@ -511,6 +510,7 @@ int main(int argc, char *argv[])
   //marker_detector.SetMarkerSizeForId(10, 2.9);
   //marker_detector.SetMarkerSizeForId(11, 2.9);
   marker_detector.SetMarkerSizeForId(1, 7.0);
+  marker_detector.SetMarkerSizeForId(5, 7.0);
   //marker_detector.SetMarkerSizeForId(7, 16);
   // Camera calib
   marker_detector.SetMarkerSizeForId(0, 20.3);

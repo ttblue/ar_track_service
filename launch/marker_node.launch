@@ -21,4 +21,10 @@
 	      output="screen" 
 	      args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame)" />
 
+	<node name="camera_mapping_$(arg cam)" 
+	      pkg="ar_track_service" 
+	      type="save_mapping.py"
+	      output="screen"
+	      args="--dev_id=$(arg dev_id) --cam=$(arg cam)" />
+
 </launch>

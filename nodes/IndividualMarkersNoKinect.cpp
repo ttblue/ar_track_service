@@ -240,6 +240,7 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(10, 2.9);
   marker_detector.SetMarkerSizeForId(11, 2.9);*/
   marker_detector.SetMarkerSizeForId(1, 7.0);
+  marker_detector.SetMarkerSizeForId(5, 7.0);
   //marker_detector.SetMarkerSizeForId(7, 16);
 
   // Camera calib

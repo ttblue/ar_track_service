@@ -67,6 +67,7 @@ MarkerDetector<MarkerData> marker_detector;
 double marker_size, marker_size_stand;
 double max_new_marker_error;
 double max_track_error;
+bool use_image = false;
 
 
 
@@ -153,8 +154,9 @@ int PlaneFitPoseImprovement(int id, const ARCloud &corners_3D, ARCloud::Ptr sele
 }
 
 int pub = 0;
-void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
+std::vector<size_t> GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 
+  std::vector<size_t> good_markers;
   //Detect and track the markers
   if (marker_detector.Detect(image, cam, true, false, max_new_marker_error,
 			     max_track_error, CVSEQ, true))
@@ -211,8 +213,11 @@ void GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 
 	  //Use the kinect data to find a plane and pose for the marker
 	  int ret = PlaneFitPoseImprovement(i, m->ros_corners_3D, selected_points, cloud, m->pose);
+	  if (ret != -1 || use_image)
+	    good_markers.push_back(i);
 	}
     }
+  return good_markers;
 }
 
 
@@ -243,12 +248,13 @@ bool getMarkersCallback (ar_track_service::MarkerPositions::Request &req,
     capture_ = bridge_.imgMsgToCv (image_msg, "rgb8");
 
     //Use the kinect to improve the pose
-    GetMarkerPoses(capture_, cloud);
+    std::vector<size_t> good_markers = GetMarkerPoses(capture_, cloud);
 
     try {
       arPoseMarkers_.markers.clear ();
-      for (size_t i=0; i<marker_detector.markers->size(); i++)
+      for (size_t j=0; j<good_markers.size();j++)
 	{
+	  size_t i = good_markers[j];
 	  //Get the pose relative to the camera
 	  int id = (*(marker_detector.markers))[i].GetId();
 	  Pose p = (*(marker_detector.markers))[i].pose;
@@ -309,6 +315,7 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(10, 2.9);
   marker_detector.SetMarkerSizeForId(11, 2.9);*/
   marker_detector.SetMarkerSizeForId(1, 7.0);
+  marker_detector.SetMarkerSizeForId(5, 7.0);
   //marker_detector.SetMarkerSizeForId(7, 16);
 
   // Camera calib

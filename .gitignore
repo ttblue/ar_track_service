@@ -21,3 +21,5 @@
 *pyc
 *bin/*
 *CMakeFiles/*
+*.png
+*.xml
