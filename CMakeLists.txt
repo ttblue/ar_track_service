@@ -40,3 +40,9 @@ target_link_libraries(marker_node ar_track_alvar kinect_filtering)
 rosbuild_add_executable(marker_node_no_depth nodes/IndividualMarkersNoKinect.cpp)
 target_link_libraries(marker_node_no_depth ar_track_alvar kinect_filtering)
 
+rosbuild_add_executable(marker_image_service nodes/IndividualMarkersServiceCamera.cpp)
+target_link_libraries(marker_image_service ar_track_alvar kinect_filtering)
+
+rosbuild_add_executable(marker_node_camera nodes/IndividualMarkersCamera.cpp)
+target_link_libraries(marker_node_camera ar_track_alvar kinect_filtering)
+

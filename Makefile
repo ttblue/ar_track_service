@@ -177,6 +177,19 @@ clean-test-results/fast:
 .PHONY : clean-test-results/fast
 
 #=============================================================================
+# Target rules for targets named marker_image_service
+
+# Build rule for target.
+marker_image_service: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 marker_image_service
+.PHONY : marker_image_service
+
+# fast build rule for target.
+marker_image_service/fast:
+	$(MAKE) -f CMakeFiles/marker_image_service.dir/build.make CMakeFiles/marker_image_service.dir/build
+.PHONY : marker_image_service/fast
+
+#=============================================================================
 # Target rules for targets named marker_node
 
 # Build rule for target.
@@ -188,6 +201,19 @@ marker_node: cmake_check_build_system
 marker_node/fast:
 	$(MAKE) -f CMakeFiles/marker_node.dir/build.make CMakeFiles/marker_node.dir/build
 .PHONY : marker_node/fast
+
+#=============================================================================
+# Target rules for targets named marker_node_camera
+
+# Build rule for target.
+marker_node_camera: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 marker_node_camera
+.PHONY : marker_node_camera
+
+# fast build rule for target.
+marker_node_camera/fast:
+	$(MAKE) -f CMakeFiles/marker_node_camera.dir/build.make CMakeFiles/marker_node_camera.dir/build
+.PHONY : marker_node_camera/fast
 
 #=============================================================================
 # Target rules for targets named marker_node_no_depth
@@ -359,6 +385,21 @@ tests/fast:
 .PHONY : tests/fast
 
 # target to build an object file
+nodes/IndividualMarkersCamera.o:
+	$(MAKE) -f CMakeFiles/marker_node_camera.dir/build.make CMakeFiles/marker_node_camera.dir/nodes/IndividualMarkersCamera.o
+.PHONY : nodes/IndividualMarkersCamera.o
+
+# target to preprocess a source file
+nodes/IndividualMarkersCamera.i:
+	$(MAKE) -f CMakeFiles/marker_node_camera.dir/build.make CMakeFiles/marker_node_camera.dir/nodes/IndividualMarkersCamera.i
+.PHONY : nodes/IndividualMarkersCamera.i
+
+# target to generate assembly for a file
+nodes/IndividualMarkersCamera.s:
+	$(MAKE) -f CMakeFiles/marker_node_camera.dir/build.make CMakeFiles/marker_node_camera.dir/nodes/IndividualMarkersCamera.s
+.PHONY : nodes/IndividualMarkersCamera.s
+
+# target to build an object file
 nodes/IndividualMarkersNoKinect.o:
 	$(MAKE) -f CMakeFiles/marker_node_no_depth.dir/build.make CMakeFiles/marker_node_no_depth.dir/nodes/IndividualMarkersNoKinect.o
 .PHONY : nodes/IndividualMarkersNoKinect.o
@@ -389,6 +430,21 @@ nodes/IndividualMarkersService.s:
 .PHONY : nodes/IndividualMarkersService.s
 
 # target to build an object file
+nodes/IndividualMarkersServiceCamera.o:
+	$(MAKE) -f CMakeFiles/marker_image_service.dir/build.make CMakeFiles/marker_image_service.dir/nodes/IndividualMarkersServiceCamera.o
+.PHONY : nodes/IndividualMarkersServiceCamera.o
+
+# target to preprocess a source file
+nodes/IndividualMarkersServiceCamera.i:
+	$(MAKE) -f CMakeFiles/marker_image_service.dir/build.make CMakeFiles/marker_image_service.dir/nodes/IndividualMarkersServiceCamera.i
+.PHONY : nodes/IndividualMarkersServiceCamera.i
+
+# target to generate assembly for a file
+nodes/IndividualMarkersServiceCamera.s:
+	$(MAKE) -f CMakeFiles/marker_image_service.dir/build.make CMakeFiles/marker_image_service.dir/nodes/IndividualMarkersServiceCamera.s
+.PHONY : nodes/IndividualMarkersServiceCamera.s
+
+# target to build an object file
 nodes/IndividualMarkersTopic.o:
 	$(MAKE) -f CMakeFiles/marker_node.dir/build.make CMakeFiles/marker_node.dir/nodes/IndividualMarkersTopic.o
 .PHONY : nodes/IndividualMarkersTopic.o
@@ -416,7 +472,9 @@ help:
 	@echo "... ROSBUILD_gensrv_py"
 	@echo "... clean-test-results"
 	@echo "... edit_cache"
+	@echo "... marker_image_service"
 	@echo "... marker_node"
+	@echo "... marker_node_camera"
 	@echo "... marker_node_no_depth"
 	@echo "... marker_service"
 	@echo "... rebuild_cache"
@@ -431,12 +489,18 @@ help:
 	@echo "... test-results"
 	@echo "... test-results-run"
 	@echo "... tests"
+	@echo "... nodes/IndividualMarkersCamera.o"
+	@echo "... nodes/IndividualMarkersCamera.i"
+	@echo "... nodes/IndividualMarkersCamera.s"
 	@echo "... nodes/IndividualMarkersNoKinect.o"
 	@echo "... nodes/IndividualMarkersNoKinect.i"
 	@echo "... nodes/IndividualMarkersNoKinect.s"
 	@echo "... nodes/IndividualMarkersService.o"
 	@echo "... nodes/IndividualMarkersService.i"
 	@echo "... nodes/IndividualMarkersService.s"
+	@echo "... nodes/IndividualMarkersServiceCamera.o"
+	@echo "... nodes/IndividualMarkersServiceCamera.i"
+	@echo "... nodes/IndividualMarkersServiceCamera.s"
 	@echo "... nodes/IndividualMarkersTopic.o"
 	@echo "... nodes/IndividualMarkersTopic.i"
 	@echo "... nodes/IndividualMarkersTopic.s"

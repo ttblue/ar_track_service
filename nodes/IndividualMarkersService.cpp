@@ -292,15 +292,13 @@ bool getMarkersCallback (ar_track_service::MarkerPositions::Request &req,
 
 int main(int argc, char *argv[])
 {
-  ros::init (argc, argv, "marker_detect");
+  ros::init (argc, argv, "marker_detect_service");
   ros::NodeHandle n;
   ros::ServiceServer markerService =
     n.advertiseService ("getMarkers", getMarkersCallback);
   // Change accordingly
   marker_size = 3.8;
-  marker_size_stand = 5.5;
 
-  // Not sure what these values are
   max_new_marker_error = 0.08;
   max_track_error = 0.2;
 
