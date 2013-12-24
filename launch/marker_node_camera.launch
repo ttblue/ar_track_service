@@ -1,0 +1,37 @@
+<launch>
+
+	<arg name="marker_size" default="5.5" />
+	<arg name="max_new_marker_error" default="0.08" />
+	<arg name="max_track_error" default="0.0" />
+
+	<arg name="cam" default="camera2" /> 
+	<arg name="cam_image_topic" default="/$(arg cam)/image_raw" />
+	<arg name="output_frame" default="/$(arg cam)_rgb_optical_frame" />
+	<arg name="calib" default="" />
+	<arg name="dev_video" default="0" />
+
+	<!-- Start the GSCAM node -->
+   	<env name="GSCAM_CONFIG" value="v4l2src device=/dev/video$(arg dev_video) ! video/x-raw-yuv,framerate=30/1 ! ffmpegcolorspace " />
+	<node pkg="gscam" type="gscam" name="$(arg cam)" output="screen">
+   	      <param name="camera_name" value="$(arg cam)" />
+    	      <remap from="gscam/image_raw" to="$(arg cam_image_topic)" />
+  	</node>
+
+	<!-- tf stuff -->
+	<node pkg="tf" 
+	      type="static_transform_publisher"
+	      name="tf_stp_$(arg cam)"
+	      args="0 0 0 0 0 0 /map $(arg output_frame) 10" />
+
+  	<!-- Provide rectification -->
+  	<node pkg="image_proc" type="image_proc" name="creative_image_proc" ns="$(arg cam)" />	
+	
+	<!-- AR tracker node -->
+	<node name="ar_track_service_$(arg cam)" 
+	      pkg="ar_track_service" 
+	      type="marker_node_camera"
+	      respawn="false" 
+	      output="screen" 
+	      args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg output_frame) $(arg calib)" />
+
+</launch>
