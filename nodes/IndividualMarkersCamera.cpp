@@ -82,9 +82,11 @@ void setCameraInfo () {
     int w, h;
     float k1, k2, k3, k4;
     float d1, d2, d3, d4;
-      
+
+    calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
     ifstream calib (calib_file.c_str());
     if (calib) {
+      std::cout<<"Using calibration file: "<<calib_file<<std::endl;
       string line;
 
       getline(calib, line);

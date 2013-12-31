@@ -1,0 +1,58 @@
+<launch>
+
+	<arg name="track_ar" default="1" />
+	<arg name="marker_size" default="5.5" />
+	<arg name="max_new_marker_error" default="0.08" />
+	<arg name="max_track_error" default="0.0" />
+
+	<arg name="cam" default="camera2" /> 
+	<arg name="cam_image_topic" default="/$(arg cam)/image_raw" />
+	<arg name="output_frame" default="/$(arg cam)_rgb_optical_frame" />
+	<arg name="calib" default="" />
+	<arg name="dev_video" default="0" />
+
+	<!-- Start the GSCAM node -->
+   	<!-- env name="GSCAM_CONFIG" value="v4l2src device=/dev/video$(arg dev_video) ! video/x-raw-yuv,framerate=30/1 ! ffmpegcolorspace " -->
+	<node pkg="gscam" type="gscam" name="$(arg cam)_gscam" output="screen">
+   	      <param name="camera_name" value="$(arg cam)" />
+	      <param name="gscam_config" value="v4l2src device=/dev/video$(arg dev_video) ! video/x-raw-yuv,framerate=30/1 ! ffmpegcolorspace " />
+	      <param name="frame_id" value="$(arg output_frame)" />
+    	      <!-- remap from="camera/image_raw" to="$(arg cam_image_topic)" -->
+  	</node>
+
+	<!-- tf stuff to create /camera_link frame -->
+	<node pkg="tf" 
+	      type="static_transform_publisher"
+	      name="tf_stp_$(arg cam)"
+	      args="0 -0.045 0 -0.5 0.5 -0.5 0.5 /$(arg cam)_link $(arg output_frame) 33" />
+
+  	<!-- Provide rectification -->
+  	<node pkg="image_proc" type="image_proc" name="creative_image_proc" ns="$(arg cam)" />	
+	
+	<!-- Save mapping from camera to dev_video -->
+	<node name="camera_mapping_$(arg cam)" 
+	      pkg="ar_track_service" 
+	      type="save_mapping.py"
+	      output="screen"
+	      args="--dev_video=$(arg dev_video) --cam=$(arg cam)" />
+
+
+	<!-- Save type -->
+	<node name="camera_type_$(arg cam)" 
+	      pkg="ar_track_service" 
+	      type="save_type.py"
+	      output="screen"
+	      args="--type=rgb --cam=$(arg cam)" />
+
+	
+	<!-- AR tracker node -->
+	<group if="$(arg track_ar)">
+	      <node name="ar_track_service_$(arg cam)" 
+	      	    pkg="ar_track_service" 
+	      	    type="marker_node_camera"
+	      	    respawn="false" 
+	      	    output="screen" 
+	      	    args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg output_frame) $(arg calib)" />
+	</group>
+
+</launch>

@@ -1,0 +1,63 @@
+<launch>
+	
+	<arg name="track_ar" default="1" />
+
+	<arg name="use_depth" default="1" />
+	<arg name="marker_size" default="5.5" />
+	<arg name="max_new_marker_error" default="0.08" />
+	<arg name="max_track_error" default="0.0" />
+
+	<arg name="dev_id" default="#1"/>
+	<arg name="cam" default="camera1" />
+	<arg name="cam_image_topic" default="/$(arg cam)/depth_registered/points" />
+	<arg name="cam_info_topic" default="/$(arg cam)/rgb/camera_info" />
+	<arg name="output_frame" default="/$(arg cam)_rgb_optical_frame" />
+	<arg name="use_image" default="0"/>
+
+	<!-- Launch kinect -->
+	<include file="$(find openni_launch)/launch/openni.launch" >
+		 <arg name="device_id" value="$(arg dev_id)" />
+		 <arg name="camera" value="$(arg cam)" />
+	</include>
+
+	<!-- Make depth registered -->
+  	<node pkg="dynamic_reconfigure" 
+	      type="dynparam" 
+	      name="dynparam" 
+	      args="set /$(arg cam)/driver depth_registration true" />
+
+	<!-- Save mapping from device id to camera -->
+	<node name="camera_mapping_$(arg cam)" 
+	      pkg="ar_track_service" 
+	      type="save_mapping.py"
+	      output="screen"
+	      args="--dev_id=$(arg dev_id) --cam=$(arg cam)" />
+
+	<!-- Save type -->
+	<node name="camera_type_$(arg cam)" 
+	      pkg="ar_track_service" 
+	      type="save_type.py"
+	      output="screen"
+	      args="--type=rgbd --cam=$(arg cam)" />
+
+	<!-- Launch ar tracking noded if needed, checking whether to use depth or not -->
+	<group if="$(arg track_ar)" >
+	      <group if="$(arg use_depth)" >
+	      	    <node name="ar_track_service_$(arg cam)" 
+	      	    	  pkg="ar_track_service" 
+	     	     	  type="marker_node" 
+	      	     	  respawn="false" 
+	      	     	  output="screen" 
+	      	     	  args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame) $(arg use_image)" />
+	      </group>
+	      <group unless="$(arg use_depth)">
+	      	    <node name="ar_track_service_$(arg cam)" 
+	      	    	  pkg="ar_track_service" 
+	      		  type="marker_node_no_depth" 
+	      		  respawn="false" 
+	      		  output="screen" 
+	      		  args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg cam_info_topic) $(arg output_frame)" />
+	      </group>
+	</group>
+
+</launch>
