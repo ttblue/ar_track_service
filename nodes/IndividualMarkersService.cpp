@@ -293,9 +293,6 @@ bool getMarkersCallback (ar_track_service::MarkerPositions::Request &req,
 int main(int argc, char *argv[])
 {
   ros::init (argc, argv, "marker_detect_service");
-  ros::NodeHandle n;
-  ros::ServiceServer markerService =
-    n.advertiseService ("getMarkers", getMarkersCallback);
   // Change accordingly
   marker_size = 3.8;
 
@@ -324,6 +321,11 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(31, 20.3);
   marker_detector.SetMarkerSizeForId(32, 20.3);
   marker_detector.SetMarkerSizeForId(33, 20.3);
+
+  ros::NodeHandle n;
+  ros::ServiceServer markerService =
+    n.advertiseService ("getMarkers", getMarkersCallback);
+
 
   cam = new Camera();
 

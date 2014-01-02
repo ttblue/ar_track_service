@@ -157,8 +157,12 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
   //If we've already gotten the cam info, then go ahead
   if(cam->getCamInfo_) {
     //capture_ = bridge_.imgMsgToCv (req.img, "rgb8");
-    m_ = *cv_bridge::toCvCopy(req.img, "rgb8");
-    capture_ = new IplImage(m_.image);
+    //    sensor_msg::Image copy_img;
+    //memcpy(right_image_.data[0],  DSIF->getRImage(), image_size);
+    sensor_msgs::ImageConstPtr img_ptr (new sensor_msgs::Image(req.img));
+    capture_ = bridge_.imgMsgToCv (img_ptr, "rgb8");
+    //    m_ = *cv_bridge::toCvCopy(req.img, "rgb8");
+    //capture_ = new IplImage(m_.image);
     
     marker_detector.Detect(capture_, cam, true, false, max_new_marker_error, max_track_error, CVSEQ, true);
 
@@ -180,9 +184,14 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
       double qz = p.quaternion[3];
       double qw = p.quaternion[0];
 
+      cout <<"Vals: "<<px<<" "<<py<<" "<<pz<<endl;
+
       btQuaternion rotation (qx,qy,qz,qw);
       btVector3 origin (px,py,pz);
-      btTransform markerPose (rotation, origin);
+      btTransform t (rotation, origin);
+      btVector3 markerOrigin (0, 0, 0);
+      btTransform m (btQuaternion::getIdentity (), markerOrigin);
+      btTransform markerPose = t * m; // marker pose in the camera frame
 
       //Create the pose marker messages
       ar_track_alvar::AlvarMarker ar_pose_marker;
@@ -199,10 +208,8 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
 
 int main(int argc, char *argv[])
 {
+
   ros::init (argc, argv, "marker_image_detect_service");
-  ros::NodeHandle n;
-  ros::ServiceServer markerService =
-    n.advertiseService ("getImageMarkers", getCapCallback);
 
   if (argc > 1)
     calib_file = argv[1];
@@ -222,6 +229,11 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(31, 20.3);
   marker_detector.SetMarkerSizeForId(32, 20.3);
   marker_detector.SetMarkerSizeForId(33, 20.3);
+
+
+  ros::NodeHandle n;
+  ros::ServiceServer markerService =
+    n.advertiseService ("getImageMarkers", getCapCallback);
 
   cam = new Camera();
 

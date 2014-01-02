@@ -15,7 +15,7 @@
    	<!-- env name="GSCAM_CONFIG" value="v4l2src device=/dev/video$(arg dev_video) ! video/x-raw-yuv,framerate=30/1 ! ffmpegcolorspace " -->
 	<node pkg="gscam" type="gscam" name="$(arg cam)_gscam" output="screen">
    	      <param name="camera_name" value="$(arg cam)" />
-	      <param name="gscam_config" value="v4l2src device=/dev/video$(arg dev_video) ! video/x-raw-yuv,framerate=30/1 ! ffmpegcolorspace " />
+	      <param name="gscam_config" value="v4l2src device=/dev/video$(arg dev_video) ! video/x-raw-yuv,width=1280,framerate=30/1 ! ffmpegcolorspace  " />
 	      <param name="frame_id" value="$(arg output_frame)" />
     	      <!-- remap from="camera/image_raw" to="$(arg cam_image_topic)" -->
   	</node>
@@ -24,7 +24,7 @@
 	<node pkg="tf" 
 	      type="static_transform_publisher"
 	      name="tf_stp_$(arg cam)"
-	      args="0 -0.045 0 -0.5 0.5 -0.5 0.5 /$(arg cam)_link $(arg output_frame) 33" />
+	      args="0 -0.045 0 -0.5 0.5 -0.5 0.5 /$(arg cam)_link $(arg output_frame)  33" />      
 
   	<!-- Provide rectification -->
   	<node pkg="image_proc" type="image_proc" name="creative_image_proc" ns="$(arg cam)" />	
