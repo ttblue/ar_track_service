@@ -48,3 +48,5 @@ target_link_libraries(marker_image_service ar_track_alvar kinect_filtering)
 rosbuild_add_executable(marker_node_camera nodes/IndividualMarkersCamera.cpp)
 target_link_libraries(marker_node_camera ar_track_alvar kinect_filtering)
 
+rosbuild_add_executable(gscam nodes/gscam.cpp)
+target_link_libraries(gscam gstreamer-0.10 gobject-2.0 gmodule-2.0 gthread-2.0 rt xml2 glib-2.0 gstapp-0.10 pthread)

@@ -8,7 +8,11 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/ar_track_service</url>
+  <rosdep name="libgstreamer0.10-dev"/>
+  <rosdep name="libgstreamer-plugins-base0.10-dev"/>
   <depend package="ar_track_alvar"/>
+  <depend package="camera_calibration_parsers" />
+
 
 </package>
 
