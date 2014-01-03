@@ -52,7 +52,7 @@
 	      	    type="marker_node_camera"
 	      	    respawn="false" 
 	      	    output="screen" 
-	      	    args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg output_frame) $(arg calib)" />
+	      	    args="$(arg marker_size) $(arg max_new_marker_error) $(arg max_track_error) $(arg cam_image_topic) $(arg output_frame) $(arg calib)_calib.txt" />
 	</group>
 
 </launch>

@@ -45,7 +45,9 @@
 #include <ar_track_alvar/AlvarMarker.h>
 #include <ar_track_alvar/AlvarMarkers.h>
 #include <tf/transform_listener.h>
+
 #include "ar_track_service/MarkerImagePositions.h"
+#include "ar_track_service/SetCalibInfo.h"
 
 
 using namespace alvar;
@@ -78,72 +80,88 @@ void getCapCallback (const sensor_msgs::ImageConstPtr & image_msg);
 
 void setCameraInfo () {
 
-  if (!cam->getCamInfo_) {
-    int w, h;
-    float k1, k2, k3, k4;
-    float d1, d2, d3, d4;
+  int w, h;
+  float k1, k2, k3, k4;
+  float d1, d2, d3, d4;
       
-    calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
-    std::cout<<"Calibration file: "<<calib_file<<std::endl;
-    ifstream calib;
-    calib.open(calib_file.c_str());
-    if (calib) {
-      string line;
+  calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
+  std::cout<<"Calibration file: "<<calib_file<<std::endl;
+  ifstream calib;
+  calib.open(calib_file.c_str());
+  if (calib) {
+    string line;
 
-      getline(calib, line);
-      istringstream in_wh(line);
-      in_wh >> w;
-      in_wh >> h;
+    getline(calib, line);
+    istringstream in_wh(line);
+    in_wh >> w;
+    in_wh >> h;
 
-      getline(calib, line);
-      istringstream in_k(line);
-      in_k >> k1;
-      in_k >> k2;
-      in_k >> k3;
-      in_k >> k4;
+    getline(calib, line);
+    istringstream in_k(line);
+    in_k >> k1;
+    in_k >> k2;
+    in_k >> k3;
+    in_k >> k4;
 
-      getline(calib, line);
-      istringstream in_d(line);
-      in_d >> d1;
-      in_d >> d2;
-      in_d >> d3;
-      in_d >> d4;
+    getline(calib, line);
+    istringstream in_d(line);
+    in_d >> d1;
+    in_d >> d2;
+    in_d >> d3;
+    in_d >> d4;
       
-      calib.close();
+    calib.close();
       
-    } else {
-      w = 1280;
-      h = 1024;
+  } else {
+    w = 1280;
+    h = 1024;
 
-      k1 = 1076.432831;
-      k2 = 1073.943676; 
-      k3 = 634.514167;
-      k4 = 515.852599;
+    k1 = 1076.432831;
+    k2 = 1073.943676; 
+    k3 = 634.514167;
+    k4 = 515.852599;
       
-      d1 = 0.045975;
-      d2 = -0.143820;
-      d3 = 0.000710;
-      d4 = 0.000672;
+    d1 = 0.045975;
+    d2 = -0.143820;
+    d3 = 0.000710;
+    d4 = 0.000672;
 
-    }
-    cam->calib_x_res = w;
-    cam->calib_y_res = h;
-    cam->x_res = w;
-    cam->y_res = h;
+  }
+  cam->calib_x_res = w;
+  cam->calib_y_res = h;
+  cam->x_res = w;
+  cam->y_res = h;
     
-    cam->calib_K_data[0][0] = k1;
-    cam->calib_K_data[1][1] = k2;
-    cam->calib_K_data[0][2] = k3;
-    cam->calib_K_data[1][2] = k4;
+  cam->calib_K_data[0][0] = k1;
+  cam->calib_K_data[1][1] = k2;
+  cam->calib_K_data[0][2] = k3;
+  cam->calib_K_data[1][2] = k4;
     
-    cam->calib_D_data[0] = d1;
-    cam->calib_D_data[1] = d2;
-    cam->calib_D_data[2] = d3;
-    cam->calib_D_data[3] = d4;
+  cam->calib_D_data[0] = d1;
+  cam->calib_D_data[1] = d2;
+  cam->calib_D_data[2] = d3;
+  cam->calib_D_data[3] = d4;
 
-    cam->getCamInfo_ = true;
-  } 
+  cam->getCamInfo_ = true;
 }
+
+
+bool setCalibInfoCallback (ar_track_service::SetCalibInfo::Request &req,
+			   ar_track_service::SetCalibInfo::Response &res) {
+
+  std::string new_calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + req.camera_model + std::string("_calib.txt");
+
+  ifstream cfile (new_calib_file.c_str());
+  if (cfile.good()) {
+    calib_file = new_calib_file;
+    setCameraInfo();
+  }
+  cfile.close();
+
+  return true;
+
+}
+
 
 bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
 		     ar_track_service::MarkerImagePositions::Response &res) {
@@ -234,10 +252,13 @@ int main(int argc, char *argv[])
   ros::NodeHandle n;
   ros::ServiceServer markerService =
     n.advertiseService ("getImageMarkers", getCapCallback);
+  ros::ServiceServer calibInfoService =
+    n.advertiseService ("setCalibInfo", setCalibInfoCallback);
+
 
   cam = new Camera();
 
-  std::cout<<"Spawned service. Ready for request."<<std::endl;	
+  std::cout<<"Spawned image and calib service. Ready for request."<<std::endl;	
 
   ros::Duration(1.0).sleep();
   ros::spin ();

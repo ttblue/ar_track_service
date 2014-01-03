@@ -16,8 +16,10 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+find_package(OpenCV REQUIRED)
 
 link_directories(/usr/lib/x86_64-linux-gnu)
+include_directories(/usr/include/gstreamer-0.10 /usr/include/glib-2.0 /usr/lib/glib-2.0/include /usr/lib/i386-linux-gnu/glib-2.0/include /usr/lib/x86_64-linux-gnu/glib-2.0/include /usr/include/libxml2)
 
 #uncomment if you have defined messages
 #rosbuild_genmsg()

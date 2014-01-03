@@ -78,72 +78,69 @@ void getCapCallback (const sensor_msgs::ImageConstPtr & image_msg);
 // hard coded values
 void setCameraInfo () {
 
-  if (!cam->getCamInfo_) {
-    int w, h;
-    float k1, k2, k3, k4;
-    float d1, d2, d3, d4;
+  int w, h;
+  float k1, k2, k3, k4;
+  float d1, d2, d3, d4;
 
-    calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
-    ifstream calib (calib_file.c_str());
-    if (calib) {
-      std::cout<<"Using calibration file: "<<calib_file<<std::endl;
-      string line;
+  calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
+  ifstream calib (calib_file.c_str());
+  if (calib) {
+    std::cout<<"Using calibration file: "<<calib_file<<std::endl;
+    string line;
 
-      getline(calib, line);
-      istringstream in_wh(line);
-      in_wh >> w;
-      in_wh >> h;
+    getline(calib, line);
+    istringstream in_wh(line);
+    in_wh >> w;
+    in_wh >> h;
 
-      getline(calib, line);
-      istringstream in_k(line);
-      in_k >> k1;
-      in_k >> k2;
-      in_k >> k3;
-      in_k >> k4;
+    getline(calib, line);
+    istringstream in_k(line);
+    in_k >> k1;
+    in_k >> k2;
+    in_k >> k3;
+    in_k >> k4;
 
-      getline(calib, line);
-      istringstream in_d(line);
-      in_d >> d1;
-      in_d >> d2;
-      in_d >> d3;
-      in_d >> d4;
+    getline(calib, line);
+    istringstream in_d(line);
+    in_d >> d1;
+    in_d >> d2;
+    in_d >> d3;
+    in_d >> d4;
       
-      calib.close();
+    calib.close();
       
-    } else {
-      w = 1280;
-      h = 720;
+  } else {
+    w = 1280;
+    h = 720;
 
-      k1 = 984.754843;
-      k2 = 981.964366; 
-      k3 = 648.881167;
-      k4 = 354.697205;
+    k1 = 984.754843;
+    k2 = 981.964366; 
+    k3 = 648.881167;
+    k4 = 354.697205;
       
-      d1 = 0.000995;
-      d2 = -0.055592;
-      d3 = 0.001255;
-      d4 = 0.001741;
+    d1 = 0.000995;
+    d2 = -0.055592;
+    d3 = 0.001255;
+    d4 = 0.001741;
 
-    }
-    cam->calib_x_res = w;
-    cam->calib_y_res = h;
-    cam->x_res = w;
-    cam->y_res = h;
+  }
+  cam->calib_x_res = w;
+  cam->calib_y_res = h;
+  cam->x_res = w;
+  cam->y_res = h;
     
-    cam->calib_K_data[0][0] = k1;
-    cam->calib_K_data[1][1] = k2;
-    cam->calib_K_data[0][2] = k3;
-    cam->calib_K_data[1][2] = k4;
+  cam->calib_K_data[0][0] = k1;
+  cam->calib_K_data[1][1] = k2;
+  cam->calib_K_data[0][2] = k3;
+  cam->calib_K_data[1][2] = k4;
     
-    cam->calib_D_data[0] = d1;
-    cam->calib_D_data[1] = d2;
-    cam->calib_D_data[2] = d3;
-    cam->calib_D_data[3] = d4;
+  cam->calib_D_data[0] = d1;
+  cam->calib_D_data[1] = d2;
+  cam->calib_D_data[2] = d3;
+  cam->calib_D_data[3] = d4;
 
-    cam->getCamInfo_ = true;
-  } 
+  cam->getCamInfo_ = true;
 }
-
 
 
 void getCapCallback (const sensor_msgs::ImageConstPtr & image_msg)

@@ -10,6 +10,7 @@ if __name__=='__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--type', help="rgbd or rgb", default="rgbd")
+    parser.add_argument('--model', help="camera model", default="creative")
     parser.add_argument('--cam', help="camera name", default="camera1")
     parser.add_argument('__name',default='')
     parser.add_argument('__log',default='')
@@ -24,6 +25,9 @@ if __name__=='__main__':
     try:
         assert cam_type in ["rgbd","rgb"]
         with open(cam_file,'w') as fh: fh.write(cam_type)
+        if cam_type == "rgb":
+            cam_model_file = osp.join(type_dir,cam+'_model')
+            with open(cam_model_file,'w') as fh: fh.write(vals.model)
     except:
         print "Invalid cam_type."
         pass
