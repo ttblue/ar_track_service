@@ -84,49 +84,34 @@ void setCameraInfo () {
   float k1, k2, k3, k4;
   float d1, d2, d3, d4;
       
-  calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
-  std::cout<<"Calibration file: "<<calib_file<<std::endl;
+  std::string calib_file_path = getenv("CAMERA_CALIB_DIR") + std::string("/") + calib_file;
+  std::cout<<"Calibration file: "<<calib_file_path<<std::endl;
+
   ifstream calib;
-  calib.open(calib_file.c_str());
-  if (calib) {
-    string line;
+  calib.open(calib_file_path.c_str());
+  string line;
 
-    getline(calib, line);
-    istringstream in_wh(line);
-    in_wh >> w;
-    in_wh >> h;
+  getline(calib, line);
+  istringstream in_wh(line);
+  in_wh >> w;
+  in_wh >> h;
 
-    getline(calib, line);
-    istringstream in_k(line);
-    in_k >> k1;
-    in_k >> k2;
-    in_k >> k3;
-    in_k >> k4;
+  getline(calib, line);
+  istringstream in_k(line);
+  in_k >> k1;
+  in_k >> k2;
+  in_k >> k3;
+  in_k >> k4;
+  
+  getline(calib, line);
+  istringstream in_d(line);
+  in_d >> d1;
+  in_d >> d2;
+  in_d >> d3;
+  in_d >> d4;
+  
+  calib.close();
 
-    getline(calib, line);
-    istringstream in_d(line);
-    in_d >> d1;
-    in_d >> d2;
-    in_d >> d3;
-    in_d >> d4;
-      
-    calib.close();
-      
-  } else {
-    w = 1280;
-    h = 1024;
-
-    k1 = 1076.432831;
-    k2 = 1073.943676; 
-    k3 = 634.514167;
-    k4 = 515.852599;
-      
-    d1 = 0.045975;
-    d2 = -0.143820;
-    d3 = 0.000710;
-    d4 = 0.000672;
-
-  }
   cam->calib_x_res = w;
   cam->calib_y_res = h;
   cam->x_res = w;
@@ -149,14 +134,17 @@ void setCameraInfo () {
 bool setCalibInfoCallback (ar_track_service::SetCalibInfo::Request &req,
 			   ar_track_service::SetCalibInfo::Response &res) {
 
-  std::string new_calib_file = getenv("CAMERA_CALIB_DIR") + std::string("/") + req.camera_model + std::string("_calib.txt");
+  std::string new_calib_file = req.camera_model + std::string("_calib.txt");
+  std::string calib_file_path = getenv("CAMERA_CALIB_DIR") + std::string("/") + new_calib_file;
 
-  ifstream cfile (new_calib_file.c_str());
+  ifstream cfile (calib_file_path.c_str());
   if (cfile.good()) {
     calib_file = new_calib_file;
-    setCameraInfo();
+    init = true;
   }
   cfile.close();
+
+  
 
   return true;
 
@@ -182,7 +170,7 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
     //    m_ = *cv_bridge::toCvCopy(req.img, "rgb8");
     //capture_ = new IplImage(m_.image);
     
-    marker_detector.Detect(capture_, cam, false, false, max_new_marker_error, max_track_error, CVSEQ, true);
+    marker_detector.Detect(capture_, cam, req.track , false, max_new_marker_error, max_track_error, CVSEQ, true);
 
     arPoseMarkers_.markers.clear ();
     printf("\n--------------------------\n\n");
@@ -204,8 +192,6 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
       double qy = p.quaternion[2];
       double qz = p.quaternion[3];
       double qw = p.quaternion[0];
-
-      cout <<"Vals: "<<px<<" "<<py<<" "<<pz<<endl;
 
       btQuaternion rotation (qx,qy,qz,qw);
       btVector3 origin (px,py,pz);

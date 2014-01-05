@@ -145,6 +145,8 @@ int main(int argc, char** argv) {
   ROS_INFO("Time offset: %.3f",time_offset_);
 
   gst_element_set_state(pipeline, GST_STATE_PAUSED);
+
+  std::cout << "Hello"<<std::endl;
   
   if (gst_element_get_state(pipeline, NULL, NULL, -1) == GST_STATE_CHANGE_FAILURE) {
     ROS_FATAL("Failed to PAUSE stream, check your gstreamer configuration.");

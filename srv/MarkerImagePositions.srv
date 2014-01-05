@@ -1,3 +1,4 @@
 sensor_msgs/Image img
+bool track
 ----
 ar_track_alvar/AlvarMarkers markers

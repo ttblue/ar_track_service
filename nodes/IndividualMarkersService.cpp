@@ -154,11 +154,11 @@ int PlaneFitPoseImprovement(int id, const ARCloud &corners_3D, ARCloud::Ptr sele
 }
 
 int pub = 0;
-std::vector<size_t> GetMarkerPoses(IplImage *image, ARCloud &cloud) {
+std::vector<size_t> GetMarkerPoses(IplImage *image, ARCloud &cloud, bool track) {
 
   std::vector<size_t> good_markers;
   //Detect and track the markers
-  if (marker_detector.Detect(image, cam, false, false, max_new_marker_error,
+  if (marker_detector.Detect(image, cam, track, false, max_new_marker_error,
 			     max_track_error, CVSEQ, true))
     {
       printf("\n--------------------------\n\n");
@@ -252,7 +252,7 @@ bool getMarkersCallback (ar_track_service::MarkerPositions::Request &req,
     capture_ = bridge_.imgMsgToCv (image_msg, "rgb8");
 
     //Use the kinect to improve the pose
-    std::vector<size_t> good_markers = GetMarkerPoses(capture_, cloud);
+    std::vector<size_t> good_markers = GetMarkerPoses(capture_, cloud, req.track);
 
     try {
       arPoseMarkers_.markers.clear ();
