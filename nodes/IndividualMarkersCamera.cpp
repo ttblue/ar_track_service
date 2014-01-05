@@ -170,6 +170,9 @@ void getCapCallback (const sensor_msgs::ImageConstPtr & image_msg)
 	  //Get the pose relative to the camera
 	  int id = (*(marker_detector.markers))[i].GetId(); 
 
+	  // Problems with marker 0
+	  if (id == 0) continue;
+
 	  cout << "******* ID: " << id << endl;
 
 	  Pose p = (*(marker_detector.markers))[i].pose;

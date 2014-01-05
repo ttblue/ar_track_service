@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
   bool preroll;
   bool use_gst_timestamps;
   std::string camera_info_url;
+  std::string camera_model;
   std::string camera_name;
 
   // Get additional gscam configuration
@@ -81,10 +82,13 @@ int main(int argc, char** argv) {
   nh.param("use_gst_timestamps", use_gst_timestamps, false);
   
   // Get the camera parameters file
+  nh.getParam("camera_model", camera_model);
   nh.getParam("camera_info_url", camera_info_url);
   nh.getParam("camera_name", camera_name);
 
-
+  // std::string camera_info_url = std::string("file:/") + getenv("CAMERA_CALIB_DIR") + std::string("/") + camera_model + std::string("/calib.ini");
+  //   std::string camera_info_url = std::string("package://ar_track_service/calib/") + camera_model + std::string("/calib.ini");
+  //camera_info_url = "package://gscam/examples/uncalibrated_parameters.ini";
 
   GstElement * sink = gst_element_factory_make("appsink",NULL);
   GstCaps * caps = gst_caps_new_simple("video/x-raw-rgb", NULL);

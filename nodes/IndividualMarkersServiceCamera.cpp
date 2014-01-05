@@ -182,7 +182,7 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
     //    m_ = *cv_bridge::toCvCopy(req.img, "rgb8");
     //capture_ = new IplImage(m_.image);
     
-    marker_detector.Detect(capture_, cam, true, false, max_new_marker_error, max_track_error, CVSEQ, true);
+    marker_detector.Detect(capture_, cam, false, false, max_new_marker_error, max_track_error, CVSEQ, true);
 
     arPoseMarkers_.markers.clear ();
     printf("\n--------------------------\n\n");
@@ -190,7 +190,10 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
     for (size_t i=0; i<marker_detector.markers->size(); i++) {
       //Get the pose relative to the camera
       int id = (*(marker_detector.markers))[i].GetId(); 
-	
+
+      // Problems with marker 0
+      if (id == 0) continue;	
+
       cout << "******* ID: " << id << endl;
 	
       Pose p = (*(marker_detector.markers))[i].pose;

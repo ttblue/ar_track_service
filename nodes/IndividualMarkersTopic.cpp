@@ -276,6 +276,10 @@ std::vector<size_t> GetMarkerPoses(IplImage *image, ARCloud &cloud) {
 	  vector<cv::Point> pixels;
 	  Marker *m = &((*marker_detector.markers)[i]);
 	  int id = m->GetId();
+
+	  // Problems with marker 0
+	  if (id == 0) continue;
+
 	  cout << "******* ID: " << id << endl;
 
 	  int resol = m->GetRes();
