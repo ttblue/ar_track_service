@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import os
+import time
 import subprocess
 import rospy, roslib
 
@@ -19,24 +20,18 @@ if __name__=="__main__":
     rospy.init_node('hydra_alerts')
     
     sub = rospy.Subscriber('/hydra_raw', Raw, call_back)
-    sleeper1 = rospy.Rate(30)
-    sleeper2 = rospy.Rate(0.75)
     
-    while latest_time == -1:
-        sleeper1.sleep()
+    while latest_time == -1 and not rospy.is_shutdown():
+        time.sleep(0.033)
         
-    print "First hydra message received."
+    if not rospy.is_shutdown():
+        print "First hydra message received."
 
-    while True:
+    while not rospy.is_shutdown():
         while rospy.Time.now().to_sec() - latest_time > threshold:
             print "HYDRA NOT PUBLISHING."
-            try:
-                retcode = subprocess.call("espeak -v en 'Hydra stopped.'", stdout=devnull, stderr=devnull, shell=True)
-                if retcode != 0 :
-                    exit()
-            except KeyboardInterrupt:
-                print "Exiting"
+            retcode = subprocess.call("espeak -v en 'Hydra stopped.'", stdout=devnull, stderr=devnull, shell=True)
+            if retcode != 0:
                 exit()
-            sleeper2.sleep()
-        sleeper1.sleep()
-            
+            time.sleep(0.5)
+        time.sleep(0.033)            
