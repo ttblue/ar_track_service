@@ -1,0 +1,12 @@
+<launch>
+
+  <!-- Launch hydra -->
+  <include file="$(find razer_hydra)/hydra.launch" />
+
+  <!-- Launch hydra alerts node -->
+  <node name="hydra_alerts" 
+  	      pkg="ar_track_service" 
+              type="hydra_alert.py"
+              output="screen"/>
+
+</launch>

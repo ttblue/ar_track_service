@@ -21,7 +21,7 @@
 *pyc
 *bin/*
 *CMakeFiles/*
-*MakeFile*
+*Makefile
 *.png
 *.xml
 
