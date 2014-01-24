@@ -75,6 +75,7 @@ std::string cam_info_topic;
 std::string output_frame;
 std::string unique_cam_name;
 std::string calib_file("");
+bool cmd_calib = false;
 
 void getCapCallback (const sensor_msgs::ImageConstPtr & image_msg);
 
@@ -133,6 +134,11 @@ void setCameraInfo () {
 
 bool setCalibInfoCallback (ar_track_service::SetCalibInfo::Request &req,
 			   ar_track_service::SetCalibInfo::Response &res) {
+
+  if (cmd_calib) {
+    std::cout<<"Calib file was provided in command line. Cannot change."<<std::endl;
+    return true;
+  }
 
   std::string new_calib_file = req.camera_model + std::string("_calib.txt");
   std::string calib_file_path = getenv("CAMERA_CALIB_DIR") + std::string("/") + new_calib_file;
@@ -218,8 +224,20 @@ int main(int argc, char *argv[])
 
   ros::init (argc, argv, "marker_image_detect_service");
 
-  if (argc > 1)
-    calib_file = argv[1];
+  cam = new Camera();  
+  std::string calib_model;
+  
+  if (argc > 1) {
+    calib_model = string(argv[1]);
+    calib_file = calib_model + std::string("_calib.txt");
+    cmd_calib = true;
+    std::cout<<"Loading calibration from file for model "<<calib_model<<"."<<std::endl;
+
+    setCameraInfo();
+    CvSize sz_ = cvSize (cam->x_res, cam->y_res);
+    capture_ = cvCreateImage (sz_, IPL_DEPTH_8U, 4);
+    init = false;	
+  }
   
   max_new_marker_error = 0.08;
   max_track_error = 0.2;
@@ -238,14 +256,14 @@ int main(int argc, char *argv[])
   marker_detector.SetMarkerSizeForId(33, 20.3);
 
 
+  std::string service_name = "getImageMarkers";
+  if (cmd_calib) service_name = service_name+calib_model;
+
   ros::NodeHandle n;
   ros::ServiceServer markerService =
-    n.advertiseService ("getImageMarkers", getCapCallback);
+    n.advertiseService (service_name, getCapCallback);
   ros::ServiceServer calibInfoService =
     n.advertiseService ("setCalibInfo", setCalibInfoCallback);
-
-
-  cam = new Camera();
 
   std::cout<<"Spawned image and calib service. Ready for request."<<std::endl;	
 
