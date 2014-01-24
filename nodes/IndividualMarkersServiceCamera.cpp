@@ -222,7 +222,7 @@ bool getCapCallback (ar_track_service::MarkerImagePositions::Request &req,
 int main(int argc, char *argv[])
 {
 
-  ros::init (argc, argv, "marker_image_detect_service");
+  ros::init (argc, argv, "marker_image_detect_service", ros::init_options::AnonymousName);
 
   cam = new Camera();  
   std::string calib_model;
